@@ -1,0 +1,139 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/title_screen.gd" id="1_title"]
+[ext_resource type="Texture2D" path="res://assets/garlic.svg" id="2_garlic"]
+
+[node name="TitleScreen" type="Control"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_title")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.29, 0.16, 0.45, 1)
+
+[node name="Title" type="RichTextLabel" parent="."]
+scroll_active = false
+layout_mode = 0
+offset_left = 20.0
+offset_top = 14.0
+offset_right = 620.0
+offset_bottom = 92.0
+theme_override_colors/font_color = Color(1, 0.92, 0.4, 1)
+theme_override_colors/font_outline_color = Color(0.1, 0.05, 0.15, 1)
+theme_override_constants/outline_size = 12
+theme_override_font_sizes/normal_font_size = 60
+text = "GARLIC PANIC!"
+horizontal_alignment = 1
+clip_contents = false
+
+[node name="Subtitle" type="RichTextLabel" parent="."]
+scroll_active = false
+layout_mode = 0
+offset_left = 20.0
+offset_top = 92.0
+offset_right = 620.0
+offset_bottom = 114.0
+theme_override_colors/font_color = Color(0.93, 0.88, 1, 1)
+theme_override_font_sizes/normal_font_size = 15
+text = "A WarioWare-style microgame collection - DODGE! MASH! CATCH!"
+horizontal_alignment = 1
+clip_contents = false
+
+[node name="GarlicIcon" type="TextureRect" parent="."]
+layout_mode = 0
+offset_left = 292.0
+offset_top = 118.0
+offset_right = 348.0
+offset_bottom = 174.0
+texture = ExtResource("2_garlic")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Buttons" type="VBoxContainer" parent="."]
+layout_mode = 0
+offset_left = 235.0
+offset_top = 186.0
+offset_right = 405.0
+offset_bottom = 330.0
+theme_override_constants/separation = 8
+
+[node name="Start" type="Button" parent="Buttons"]
+layout_mode = 2
+theme_override_colors/font_outline_color = Color(0.1, 0.05, 0.15, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 24
+text = "Start Game"
+
+[node name="Settings" type="Button" parent="Buttons"]
+layout_mode = 2
+theme_override_colors/font_outline_color = Color(0.1, 0.05, 0.15, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 24
+text = "Settings"
+
+[node name="Quit" type="Button" parent="Buttons"]
+layout_mode = 2
+theme_override_colors/font_outline_color = Color(0.1, 0.05, 0.15, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 24
+text = "Quit"
+
+[node name="Footer" type="RichTextLabel" parent="."]
+scroll_active = false
+layout_mode = 0
+offset_left = 20.0
+offset_top = 336.0
+offset_right = 620.0
+offset_bottom = 356.0
+theme_override_colors/font_color = Color(0.75, 0.68, 0.85, 1)
+theme_override_font_sizes/normal_font_size = 12
+text = "Arrows = move  |  Space = mash  |  A Hack Club Stardance mission game"
+horizontal_alignment = 1
+clip_contents = false
+
+[node name="SettingsPanel" type="Panel" parent="."]
+layout_mode = 0
+offset_left = 185.0
+offset_top = 100.0
+offset_right = 455.0
+offset_bottom = 240.0
+visible = false
+
+[node name="Heading" type="RichTextLabel" parent="SettingsPanel"]
+scroll_active = false
+layout_mode = 0
+offset_left = 10.0
+offset_top = 8.0
+offset_right = 260.0
+offset_bottom = 38.0
+theme_override_font_sizes/normal_font_size = 24
+text = "Settings"
+horizontal_alignment = 1
+clip_contents = false
+
+[node name="FullscreenCheck" type="CheckBox" parent="SettingsPanel"]
+layout_mode = 0
+offset_left = 45.0
+offset_top = 55.0
+offset_right = 225.0
+offset_bottom = 83.0
+theme_override_font_sizes/font_size = 18
+text = "Fullscreen"
+
+[node name="Back" type="Button" parent="SettingsPanel"]
+layout_mode = 0
+offset_left = 85.0
+offset_top = 98.0
+offset_right = 185.0
+offset_bottom = 130.0
+theme_override_font_sizes/font_size = 18
+text = "Back"

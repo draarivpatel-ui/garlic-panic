@@ -1,0 +1,74 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/minigame_catch.gd" id="1_catch"]
+[ext_resource type="PackedScene" path="res://scenes/themed_timer.tscn" id="2_timer"]
+[ext_resource type="Texture2D" path="res://assets/star.svg" id="3_star"]
+
+[node name="Minigame3" type="Node2D"]
+script = ExtResource("1_catch")
+
+[node name="Background" type="ColorRect" parent="."]
+offset_right = 640.0
+offset_bottom = 360.0
+color = Color(0.1, 0.15, 0.35, 1)
+
+[node name="Floor" type="ColorRect" parent="."]
+offset_top = 344.0
+offset_right = 640.0
+offset_bottom = 360.0
+color = Color(0.05, 0.07, 0.18, 1)
+
+[node name="Star" type="Sprite2D" parent="."]
+position = Vector2(320, -20)
+scale = Vector2(0.55, 0.55)
+texture = ExtResource("3_star")
+
+[node name="Paddle" type="ColorRect" parent="."]
+offset_left = 275.0
+offset_top = 316.0
+offset_right = 365.0
+offset_bottom = 330.0
+color = Color(1, 0.92, 0.4, 1)
+
+[node name="Score" type="RichTextLabel" parent="."]
+scroll_active = false
+offset_left = 12.0
+offset_top = 66.0
+offset_right = 160.0
+offset_bottom = 94.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/normal_font_size = 18
+text = "Score: 0"
+clip_contents = false
+
+[node name="HudTimer" type="RichTextLabel" parent="."]
+scroll_active = false
+offset_left = 480.0
+offset_top = 66.0
+offset_right = 628.0
+offset_bottom = 94.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/normal_font_size = 18
+text = "0.0"
+horizontal_alignment = 2
+clip_contents = false
+
+[node name="Instruction" type="RichTextLabel" parent="."]
+scroll_active = false
+offset_left = 0.0
+offset_top = 120.0
+offset_right = 640.0
+offset_bottom = 190.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0.2, 1)
+theme_override_constants/outline_size = 12
+theme_override_font_sizes/normal_font_size = 56
+text = "CATCH!"
+horizontal_alignment = 1
+clip_contents = false
+
+[node name="ThemedTimer" parent="." instance=ExtResource("2_timer")]

@@ -1,0 +1,53 @@
+extends Node
+## Global autoload - shared state for the whole WarioWare loop.
+## Follows the mission guide's "Creating a Global Script" step
+## (minigames_done / lives) and adds score + a speed multiplier so the
+## microgame rotation gets faster every round.
+
+const TOTAL_ROUNDS := 9          # rounds you must survive to reach the winner screen
+const MAX_LIVES := 5             # five garlic = five lives, exactly like the guide
+const MINIGAME_COUNT := 3        # DODGE / MASH / CATCH
+const BASE_TIME := 7.0           # seconds a microgame lasts at 1x speed
+
+var score: int = 0               # successful microgames
+var lives: int = MAX_LIVES
+var minigames_done: int = 0
+var speed_multiplier: float = 1.0
+var last_result: String = ""     # "win" / "fail" / "" - read by the intermission flash
+
+
+func reset() -> void:
+	score = 0
+	lives = MAX_LIVES
+	minigames_done = 0
+	speed_multiplier = 1.0
+	last_result = ""
+
+
+func register_win() -> void:
+	score += 1
+	minigames_done += 1
+	speed_multiplier = minf(2.5, 1.0 + 0.15 * float(minigames_done))
+	last_result = "win"
+
+
+func register_fail() -> void:
+	lives -= 1
+	last_result = "fail"
+
+
+func current_level() -> int:
+	return mini(minigames_done + 1, TOTAL_ROUNDS)
+
+
+func minigame_index() -> int:
+	return (minigames_done % MINIGAME_COUNT) + 1
+
+
+func minigame_path() -> String:
+	return "res://scenes/minigame_%d.tscn" % minigame_index()
+
+
+func time_limit() -> float:
+	## Microgames shrink their timer as the speed multiplier rises.
+	return clampf(BASE_TIME / speed_multiplier, 3.0, 8.0)
