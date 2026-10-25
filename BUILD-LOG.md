@@ -32,7 +32,7 @@ autoload, scene names `minigame_1..N`, and a Web export for itch.io.
 ## 2. Installing Godot locally (no sudo)
 
 - Pulled the latest stable 4.x from GitHub releases: `Godot_v4.7.2-stable_macos.universal.zip`.
-- Unzipped to `/Users/aarivpatel/Hub/work/tools/godot/Godot.app`, cleared quarantine
+- Unzipped into a local tools folder (`tools/godot/Godot.app`), cleared quarantine
   (`xattr -dr com.apple.quarantine` - curl doesn't stamp it, cleared anyway).
 - `./Godot.app/Contents/MacOS/Godot --version` → `4.7.2.stable.official.ed1daf0bf`.
 
@@ -79,7 +79,7 @@ Art is hand-written SVG (garlic, spike, star, icon) - no external assets.
 
 ## 4. Verification (real Godot binary, all headless)
 
-Ran `/Users/aarivpatel/Hub/work/tools/godot/Godot.app/Contents/MacOS/Godot`:
+Ran the local `Godot.app/Contents/MacOS/Godot` binary:
 
 - `--headless --path . --import` → exit 0, all 4 SVGs imported, zero errors.
 - `--headless --path . --check-only --script res://scripts/<each>.gd` → all 9

@@ -88,4 +88,4 @@ automated full-loop playthrough).
 The WarioWare mission asked for a game that gets faster and meaner. I built
 Garlic Panic around a garlic with five lives and three microgames that speed
 up every round, because a game about pressure should be under pressure itself.
-Everything is hand-drawn SVG - no asset packs.
+The art is SVG written directly as code, with no asset packs.
