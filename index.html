@@ -1,0 +1,1036 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Garlic Panic! - WarioWare-Style Microgames</title>
+  <link rel="icon" type="image/svg+xml" href="icon.svg" />
+  <style>
+    :root {
+      --bg-dark: #140b24;
+      --bg-panel: #211339;
+      --border: #3d2666;
+      --gold: #ffea66;
+      --garlic: #f5efe0;
+      --green: #40d973;
+      --red: #ff595e;
+      --blue: #4895ef;
+      --text: #f3ecff;
+      --muted: #b7a6d4;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: radial-gradient(circle at 50% 15%, #2b174a 0%, #120920 75%);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px 16px 40px;
+      user-select: none;
+    }
+
+    header {
+      width: 100%;
+      max-width: 900px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand h1 {
+      font-size: 1.55rem;
+      font-weight: 800;
+      color: var(--gold);
+      letter-spacing: 0.5px;
+      text-shadow: 0 2px 0 #000;
+    }
+
+    .badge {
+      background: #36205c;
+      border: 1px solid #593896;
+      color: #dfd2ff;
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 999px;
+    }
+
+    .toolbar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      background: #311c54;
+      color: var(--text);
+      border: 1px solid #56358f;
+      border-radius: 8px;
+      padding: 7px 13px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn:hover {
+      background: #422670;
+    }
+
+    .btn:active {
+      transform: translateY(1px);
+    }
+
+    .btn.primary {
+      background: #6132b8;
+      border-color: #8b5cf6;
+      color: #fff;
+    }
+
+    .stage-wrap {
+      width: 100%;
+      max-width: 900px;
+      background: #0d0618;
+      border: 3px solid var(--border);
+      border-radius: 14px;
+      box-shadow: 0 18px 50px rgba(0, 0, 0, 0.65);
+      overflow: hidden;
+      position: relative;
+      aspect-ratio: 16 / 9;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+      cursor: pointer;
+    }
+
+    .quick-bar {
+      width: 100%;
+      max-width: 900px;
+      margin-top: 14px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      background: rgba(33, 19, 57, 0.85);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 14px;
+    }
+
+    .quick-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .quick-label {
+      font-size: 0.8rem;
+      color: var(--muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .grid-cards {
+      width: 100%;
+      max-width: 900px;
+      margin-top: 16px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+    }
+
+    .card {
+      background: rgba(33, 19, 57, 0.72);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 14px;
+    }
+
+    .card h3 {
+      font-size: 0.95rem;
+      color: var(--gold);
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .card p {
+      font-size: 0.82rem;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+
+    .tag {
+      font-size: 0.7rem;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <h1>GARLIC PANIC!</h1>
+      <span class="badge">Godot 4.7 + HTML5 Web Build</span>
+      <span class="badge">4 Microgames</span>
+    </div>
+    <div class="toolbar">
+      <button class="btn primary" id="btnStartRun">Start Full Game</button>
+      <button class="btn" id="btnMute">Sound: ON</button>
+      <button class="btn" id="btnFullscreen">Fullscreen</button>
+      <a class="btn" href="https://github.com/draarivpatel-ui/garlic-panic" target="_blank" rel="noopener">Godot 4 Source Repo</a>
+    </div>
+  </header>
+
+  <div class="stage-wrap" id="stageWrap">
+    <canvas id="gameCanvas" width="640" height="360"></canvas>
+  </div>
+
+  <div class="quick-bar">
+    <div class="quick-group">
+      <span class="quick-label">Controls:</span>
+      <span class="badge">Left / Right or A / D = Move</span>
+      <span class="badge">SPACE or Click = Mash / Lock In</span>
+    </div>
+    <div class="quick-group">
+      <span class="quick-label">Jump to Microgame:</span>
+      <button class="btn" data-jump="1">1. DODGE!</button>
+      <button class="btn" data-jump="2">2. MASH!</button>
+      <button class="btn" data-jump="3">3. CATCH!</button>
+      <button class="btn" data-jump="4">4. TIMING!</button>
+    </div>
+  </div>
+
+  <div class="grid-cards">
+    <div class="card">
+      <h3>1. DODGE! <span class="tag">Minigame 1</span></h3>
+      <p>Move your garlic left and right with Arrow keys or A/D to survive falling crimson spikes until the timer hits 0.0s.</p>
+    </div>
+    <div class="card">
+      <h3>2. MASH! <span class="tag">Minigame 2</span></h3>
+      <p>Mash SPACE or rapidly click the giant garlic bulb to hit the target quota before time runs out. Quota scales with speed!</p>
+    </div>
+    <div class="card">
+      <h3>3. CATCH! <span class="tag">Minigame 3</span></h3>
+      <p>Slide the golden paddle left and right to catch the falling star before it hits the dungeon floor.</p>
+    </div>
+    <div class="card">
+      <h3>4. TIMING! <span class="tag">Minigame 4</span></h3>
+      <p>Wait for the oscillating cursor to enter the green target zone and press SPACE or click LOCK IN to nail the timing!</p>
+    </div>
+  </div>
+
+  <script>
+    (() => {
+      const canvas = document.getElementById("gameCanvas");
+      const ctx = canvas.getContext("2d");
+      const stageWrap = document.getElementById("stageWrap");
+      const btnMute = document.getElementById("btnMute");
+      const btnFullscreen = document.getElementById("btnFullscreen");
+      const btnStartRun = document.getElementById("btnStartRun");
+
+      const W = 640;
+      const H = 360;
+
+      function setupHiDPI() {
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        canvas.width = W * dpr;
+        canvas.height = H * dpr;
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      }
+      setupHiDPI();
+      window.addEventListener("resize", setupHiDPI);
+
+      // Web Audio Retro Synth
+      let audioCtx = null;
+      let muted = false;
+
+      function ensureAudio() {
+        if (!audioCtx) {
+          const AC = window.AudioContext || window.webkitAudioContext;
+          if (AC) audioCtx = new AC();
+        }
+        if (audioCtx && audioCtx.state === "suspended") {
+          audioCtx.resume();
+        }
+      }
+
+      function playTone(freq, duration, type = "square", vol = 0.08, slideTo = null) {
+        if (muted) return;
+        ensureAudio();
+        if (!audioCtx) return;
+        const now = audioCtx.currentTime;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, now);
+        if (slideTo) {
+          osc.frequency.exponentialRampToValueAtTime(slideTo, now + duration);
+        }
+        gain.gain.setValueAtTime(vol, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start(now);
+        osc.stop(now + duration);
+      }
+
+      function sfxWin() {
+        playTone(523.25, 0.09, "square", 0.08);
+        setTimeout(() => playTone(659.25, 0.09, "square", 0.08), 80);
+        setTimeout(() => playTone(783.99, 0.16, "square", 0.09), 160);
+      }
+
+      function sfxFail() {
+        playTone(300, 0.14, "sawtooth", 0.09, 180);
+        setTimeout(() => playTone(180, 0.24, "sawtooth", 0.09, 95), 130);
+      }
+
+      function sfxTap() {
+        playTone(440, 0.05, "triangle", 0.07, 660);
+      }
+
+      // Global State matching scripts/global.gd
+      const Global = {
+        TOTAL_ROUNDS: 12,
+        MAX_LIVES: 5,
+        MINIGAME_COUNT: 4,
+        BASE_TIME: 7.0,
+        score: 0,
+        lives: 5,
+        minigames_done: 0,
+        speed_multiplier: 1.0,
+        last_result: "",
+        reset() {
+          this.score = 0;
+          this.lives = this.MAX_LIVES;
+          this.minigames_done = 0;
+          this.speed_multiplier = 1.0;
+          this.last_result = "";
+        },
+        register_win() {
+          this.score += 1;
+          this.minigames_done += 1;
+          this.speed_multiplier = Math.min(2.5, 1.0 + 0.15 * this.minigames_done);
+          this.last_result = "win";
+          sfxWin();
+        },
+        register_fail() {
+          this.lives -= 1;
+          this.last_result = "fail";
+          sfxFail();
+        },
+        current_level() {
+          return Math.min(this.minigames_done + 1, this.TOTAL_ROUNDS);
+        },
+        minigame_index() {
+          return (this.minigames_done % this.MINIGAME_COUNT) + 1;
+        },
+        time_limit() {
+          return Math.max(3.0, Math.min(8.0, this.BASE_TIME / this.speed_multiplier));
+        }
+      };
+
+      // Input state
+      const keys = { left: false, right: false };
+      let justPressedSpace = false;
+      let pointerX = null;
+
+      window.addEventListener("keydown", (e) => {
+        if (["ArrowLeft", "KeyA"].includes(e.code)) keys.left = true;
+        if (["ArrowRight", "KeyD"].includes(e.code)) keys.right = true;
+        if (e.code === "Space" || e.code === "Enter") {
+          if (!e.repeat) justPressedSpace = true;
+          e.preventDefault();
+        }
+      });
+
+      window.addEventListener("keyup", (e) => {
+        if (["ArrowLeft", "KeyA"].includes(e.code)) keys.left = false;
+        if (["ArrowRight", "KeyD"].includes(e.code)) keys.right = false;
+      });
+
+      // Drawing Helpers matching assets/garlic.svg, assets/spike.svg, assets/star.svg
+      function drawGarlic(cx, cy, scale = 1.0) {
+        ctx.save();
+        ctx.translate(cx - 32 * scale, cy - 32 * scale);
+        ctx.scale(scale, scale);
+
+        ctx.beginPath();
+        ctx.moveTo(32, 16);
+        ctx.bezierCurveTo(22, 24, 15, 32, 15, 43);
+        ctx.bezierCurveTo(15, 53, 22, 59, 32, 59);
+        ctx.bezierCurveTo(42, 59, 49, 53, 49, 43);
+        ctx.bezierCurveTo(49, 32, 42, 24, 32, 16);
+        ctx.closePath();
+        ctx.fillStyle = "#f5efe0";
+        ctx.fill();
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = "#c9bfae";
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(32, 16);
+        ctx.bezierCurveTo(30, 9, 30, 5, 32, 1);
+        ctx.bezierCurveTo(34, 5, 34, 9, 32, 16);
+        ctx.closePath();
+        ctx.fillStyle = "#7fbf5a";
+        ctx.fill();
+
+        ctx.strokeStyle = "#ddd3c2";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(25, 26);
+        ctx.bezierCurveTo(23, 37, 23, 48, 26, 56);
+        ctx.moveTo(32, 23);
+        ctx.bezierCurveTo(31, 37, 31, 49, 32, 57);
+        ctx.moveTo(39, 26);
+        ctx.bezierCurveTo(41, 37, 41, 48, 38, 56);
+        ctx.stroke();
+
+        ctx.restore();
+      }
+
+      function drawSpike(cx, cy, scale = 0.5) {
+        const pts = [
+          [32,2],[39,15],[53,8],[50,23],[64,26],[53,36],[62,48],[46,47],
+          [46,62],[32,53],[18,62],[18,47],[2,48],[11,36],[0,26],[14,23],[11,8],[25,15]
+        ];
+        ctx.save();
+        ctx.translate(cx - 32 * scale, cy - 32 * scale);
+        ctx.scale(scale, scale);
+        ctx.beginPath();
+        pts.forEach(([x, y], i) => i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y));
+        ctx.closePath();
+        ctx.fillStyle = "#e5484d";
+        ctx.fill();
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = "#8f1d21";
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.arc(32, 32, 13, 0, Math.PI * 2);
+        ctx.fillStyle = "#b83236";
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.arc(27, 27, 4, 0, Math.PI * 2);
+        ctx.fillStyle = "#f28b8e";
+        ctx.fill();
+        ctx.restore();
+      }
+
+      function drawStar(cx, cy, scale = 0.55) {
+        const pts = [
+          [32,4],[40,24],[61,25],[44,38],[50,59],[32,46],[14,59],[20,38],[3,25],[24,24]
+        ];
+        ctx.save();
+        ctx.translate(cx - 32 * scale, cy - 32 * scale);
+        ctx.scale(scale, scale);
+        ctx.beginPath();
+        pts.forEach(([x, y], i) => i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y));
+        ctx.closePath();
+        ctx.fillStyle = "#ffd23e";
+        ctx.fill();
+        ctx.lineWidth = 3;
+        ctx.strokeStyle = "#b8860b";
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.arc(27, 28, 3, 0, Math.PI * 2);
+        ctx.fillStyle = "#fff2b0";
+        ctx.fill();
+        ctx.restore();
+      }
+
+      function drawOutlinedText(text, x, y, size, fill = "#ffffff", outline = "#000000", outlineWidth = 5, align = "center") {
+        ctx.save();
+        ctx.font = `800 ${size}px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif`;
+        ctx.textAlign = align;
+        ctx.textBaseline = "middle";
+        if (outlineWidth > 0) {
+          ctx.lineWidth = outlineWidth;
+          ctx.strokeStyle = outline;
+          ctx.lineJoin = "round";
+          ctx.strokeText(text, x, y);
+        }
+        ctx.fillStyle = fill;
+        ctx.fillText(text, x, y);
+        ctx.restore();
+      }
+
+      function drawButton(btn) {
+        ctx.save();
+        ctx.fillStyle = btn.hover ? "#5c349e" : (btn.bg || "#3b2166");
+        ctx.strokeStyle = btn.border || "#8e65d6";
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        ctx.roundRect(btn.x, btn.y, btn.w, btn.h, 8);
+        ctx.fill();
+        ctx.stroke();
+        drawOutlinedText(btn.label, btn.x + btn.w / 2, btn.y + btn.h / 2 + 1, btn.fontSize || 20, "#ffffff", "#190a2e", 4);
+        ctx.restore();
+      }
+
+      // Scene Machine
+      let currentScene = "title";
+      let sceneState = {};
+      let activeButtons = [];
+
+      function changeScene(name, customIndex = null) {
+        currentScene = name;
+        activeButtons = [];
+        justPressedSpace = false;
+
+        if (name === "title") {
+          sceneState = { settingsOpen: false };
+        } else if (name === "timer_screen") {
+          sceneState = { time_left: 2.2 };
+        } else if (name === "minigame_1") {
+          sceneState = {
+            time_left: Global.time_limit(),
+            elapsed: 0,
+            playerX: 320,
+            spawnCooldown: 0.35,
+            spikes: []
+          };
+        } else if (name === "minigame_2") {
+          const target = Math.ceil(10 * Global.speed_multiplier);
+          sceneState = {
+            time_left: Global.time_limit(),
+            elapsed: 0,
+            target,
+            presses: 0,
+            squash: 1.0
+          };
+        } else if (name === "minigame_3") {
+          sceneState = {
+            time_left: Global.time_limit(),
+            elapsed: 0,
+            paddleX: 275,
+            starX: 70 + Math.random() * 500,
+            starY: -20,
+            starSpeed: 200 * Global.speed_multiplier
+          };
+        } else if (name === "minigame_4") {
+          sceneState = {
+            time_left: Global.time_limit(),
+            elapsed: 0,
+            markerX: 120,
+            sweepDir: 1,
+            sweepSpeed: 380 * Global.speed_multiplier,
+            barLeft: 100,
+            barRight: 540,
+            targetLeft: 270,
+            targetRight: 370
+          };
+        } else if (name === "done_screen" || name === "death_screen") {
+          sceneState = {};
+        }
+      }
+
+      function drawHUD(time_left) {
+        drawOutlinedText(time_left.toFixed(1), 320, 34, 38, "#ffffff", "#000000", 7, "center");
+        drawOutlinedText(`Score: ${Global.score}`, 16, 78, 18, "#ffffff", "#000000", 4, "left");
+        drawOutlinedText(`Speed: ${Global.speed_multiplier.toFixed(2)}x`, 624, 78, 18, "#ffea66", "#000000", 4, "right");
+      }
+
+      function updateAndRender(dt) {
+        ctx.clearRect(0, 0, W, H);
+        activeButtons = [];
+
+        if (currentScene === "title") {
+          ctx.fillStyle = "#4a2973";
+          ctx.fillRect(0, 0, W, H);
+
+          drawOutlinedText("GARLIC PANIC!", 320, 52, 54, "#ffea66", "#1a0d26", 10);
+          drawOutlinedText("A WarioWare-style microgame collection - DODGE! MASH! CATCH! TIMING!", 320, 102, 14.5, "#ede0ff", "#1a0d26", 3);
+
+          drawGarlic(320, 148, 0.95);
+
+          if (!sceneState.settingsOpen) {
+            const startBtn = {
+              x: 225, y: 188, w: 190, h: 42, label: "Start Game", fontSize: 22, bg: "#5a2eb0",
+              onClick: () => { sfxTap(); Global.reset(); changeScene("timer_screen"); }
+            };
+            const settingsBtn = {
+              x: 225, y: 238, w: 190, h: 38, label: "Settings", fontSize: 19,
+              onClick: () => { sfxTap(); sceneState.settingsOpen = true; }
+            };
+            const practiceBtn = {
+              x: 225, y: 284, w: 190, h: 38, label: "Play TIMING! (#4)", fontSize: 17,
+              onClick: () => { sfxTap(); Global.reset(); Global.minigames_done = 3; changeScene("minigame_4"); }
+            };
+            activeButtons.push(startBtn, settingsBtn, practiceBtn);
+            activeButtons.forEach(drawButton);
+
+            if (justPressedSpace) {
+              startBtn.onClick();
+            }
+          } else {
+            ctx.fillStyle = "rgba(20, 10, 38, 0.95)";
+            ctx.strokeStyle = "#8e65d6";
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.roundRect(175, 115, 290, 190, 10);
+            ctx.fill();
+            ctx.stroke();
+
+            drawOutlinedText("Settings", 320, 142, 24, "#ffea66", "#000", 4);
+            const muteToggleBtn = {
+              x: 215, y: 170, w: 210, h: 38, label: muted ? "Sound: OFF" : "Sound: ON", fontSize: 18,
+              onClick: () => { toggleMute(); }
+            };
+            const fsBtn = {
+              x: 215, y: 215, w: 210, h: 38, label: "Toggle Fullscreen", fontSize: 18,
+              onClick: () => { toggleFullscreen(); }
+            };
+            const backBtn = {
+              x: 255, y: 260, w: 130, h: 34, label: "Back", fontSize: 17,
+              onClick: () => { sfxTap(); sceneState.settingsOpen = false; }
+            };
+            activeButtons.push(muteToggleBtn, fsBtn, backBtn);
+            activeButtons.forEach(drawButton);
+          }
+
+          drawOutlinedText("Arrows / A-D = move   |   Space / Click = mash & lock in   |   Hack Club Stardance", 320, 344, 12.5, "#cbb8e8", "#000", 2);
+        }
+
+        else if (currentScene === "timer_screen") {
+          ctx.fillStyle = "#291a47";
+          ctx.fillRect(0, 0, W, H);
+
+          drawOutlinedText(`Score: ${Global.score}`, 20, 26, 20, "#ffffff", "#000", 4, "left");
+          drawOutlinedText(`Speed: ${Global.speed_multiplier.toFixed(2)}x`, 320, 26, 18, "#ffea66", "#000", 4, "center");
+          drawOutlinedText(`Level ${Global.current_level()} / ${Global.TOTAL_ROUNDS}`, 620, 26, 20, "#ffffff", "#000", 4, "right");
+
+          // Draw 5 garlic lives
+          for (let i = 0; i < Global.MAX_LIVES; i++) {
+            const gx = 208 + i * 56;
+            const gy = 74;
+            if (i < Global.lives) {
+              drawGarlic(gx, gy, 0.65);
+            } else {
+              ctx.save();
+              ctx.globalAlpha = 0.22;
+              drawGarlic(gx, gy, 0.65);
+              ctx.restore();
+            }
+          }
+
+          sceneState.time_left -= dt;
+          const tDisp = Math.max(0, sceneState.time_left).toFixed(1);
+          drawOutlinedText(tDisp, 320, 150, 52, "#ffea66", "#000000", 8);
+
+          let readyText = "GET READY...";
+          if (Global.lives <= 0) readyText = "OUT OF GARLIC...";
+          else if (Global.minigames_done >= Global.TOTAL_ROUNDS) readyText = "YOU SURVIVED!";
+          drawOutlinedText(readyText, 320, 214, 34, "#ffffff", "#000000", 6);
+
+          if (Global.last_result === "fail") {
+            drawOutlinedText("MISSED!  -1 garlic", 320, 262, 23, "#ff6b6b", "#000000", 4);
+          } else if (Global.last_result === "win") {
+            drawOutlinedText("NICE!  +1 score", 320, 262, 23, "#40d973", "#000000", 4);
+          }
+
+          const nextNames = ["DODGE!", "MASH!", "CATCH!", "TIMING!"];
+          const nextName = nextNames[Global.minigame_index() - 1];
+          drawOutlinedText(`Next Up: Microgame #${Global.minigame_index()} (${nextName})`, 320, 330, 15, "#cbb8e8", "#000", 3);
+
+          if (sceneState.time_left <= 0) {
+            if (Global.lives <= 0) {
+              changeScene("death_screen");
+            } else if (Global.minigames_done >= Global.TOTAL_ROUNDS) {
+              changeScene("done_screen");
+            } else {
+              changeScene(`minigame_${Global.minigame_index()}`);
+            }
+          }
+        }
+
+        else if (currentScene === "minigame_1") {
+          // DODGE!
+          ctx.fillStyle = "#d97333";
+          ctx.fillRect(0, 0, W, H);
+          ctx.fillStyle = "#592e1a";
+          ctx.fillRect(0, 344, W, 16);
+
+          sceneState.elapsed += dt;
+          sceneState.time_left -= dt;
+
+          const dir = (keys.right ? 1 : 0) - (keys.left ? 1 : 0);
+          if (dir !== 0) {
+            sceneState.playerX = Math.max(20, Math.min(620, sceneState.playerX + dir * 280 * dt));
+          } else if (pointerX !== null) {
+            const diff = pointerX - sceneState.playerX;
+            if (Math.abs(diff) > 4) {
+              sceneState.playerX = Math.max(20, Math.min(620, sceneState.playerX + Math.sign(diff) * 280 * dt));
+            }
+          }
+
+          sceneState.spawnCooldown -= dt;
+          if (sceneState.spawnCooldown <= 0) {
+            sceneState.spikes.push({
+              x: 24 + Math.random() * 592,
+              y: -20,
+              speed: (170 + Math.random() * 90) * Global.speed_multiplier
+            });
+            sceneState.spawnCooldown = (0.55 + Math.random() * 0.3) / Global.speed_multiplier;
+          }
+
+          drawGarlic(sceneState.playerX, 310, 0.5);
+
+          let hit = false;
+          for (let i = sceneState.spikes.length - 1; i >= 0; i--) {
+            const s = sceneState.spikes[i];
+            s.y += s.speed * dt;
+            drawSpike(s.x, s.y, 0.5);
+            if (Math.abs(s.x - sceneState.playerX) < 25 && Math.abs(s.y - 310) < 25) {
+              hit = true;
+            }
+            if (s.y > 400) sceneState.spikes.splice(i, 1);
+          }
+
+          drawHUD(Math.max(0, sceneState.time_left));
+          if (sceneState.elapsed < 1.2) {
+            drawOutlinedText("DODGE!", 320, 165, 56, "#ffffff", "#330d00", 11);
+          }
+
+          if (hit) {
+            Global.register_fail();
+            changeScene("timer_screen");
+          } else if (sceneState.time_left <= 0) {
+            Global.register_win();
+            changeScene("timer_screen");
+          }
+        }
+
+        else if (currentScene === "minigame_2") {
+          // MASH!
+          ctx.fillStyle = "#3373bf";
+          ctx.fillRect(0, 0, W, H);
+
+          sceneState.elapsed += dt;
+          sceneState.time_left -= dt;
+          sceneState.squash += (1.0 - sceneState.squash) * Math.min(1, dt * 18);
+
+          if (justPressedSpace) {
+            sceneState.presses += 1;
+            sceneState.squash = 0.86;
+            sfxTap();
+          }
+
+          // Clickable garlic area
+          const mashArea = {
+            x: 250, y: 130, w: 140, h: 140,
+            onClick: () => {
+              sceneState.presses += 1;
+              sceneState.squash = 0.86;
+              sfxTap();
+            }
+          };
+          activeButtons.push(mashArea);
+
+          drawGarlic(320, 200, 1.85 * sceneState.squash);
+
+          drawOutlinedText(`${sceneState.presses} / ${sceneState.target}`, 320, 290, 34, "#ffea66", "#000000", 6);
+          drawOutlinedText("Press SPACE (or click the garlic) as fast as you can!", 320, 334, 15, "#d9e6ff", "#000000", 3);
+
+          drawHUD(Math.max(0, sceneState.time_left));
+          if (sceneState.elapsed < 1.2) {
+            drawOutlinedText("MASH!", 320, 102, 56, "#ffffff", "#001a4d", 11);
+          }
+
+          if (sceneState.presses >= sceneState.target) {
+            Global.register_win();
+            changeScene("timer_screen");
+          } else if (sceneState.time_left <= 0) {
+            Global.register_fail();
+            changeScene("timer_screen");
+          }
+        }
+
+        else if (currentScene === "minigame_3") {
+          // CATCH!
+          ctx.fillStyle = "#1a2659";
+          ctx.fillRect(0, 0, W, H);
+          ctx.fillStyle = "#0d122e";
+          ctx.fillRect(0, 344, W, 16);
+
+          sceneState.elapsed += dt;
+          sceneState.time_left -= dt;
+
+          const dir = (keys.right ? 1 : 0) - (keys.left ? 1 : 0);
+          if (dir !== 0) {
+            sceneState.paddleX = Math.max(10, Math.min(540, sceneState.paddleX + dir * 320 * dt));
+          } else if (pointerX !== null) {
+            const targetX = pointerX - 45;
+            const diff = targetX - sceneState.paddleX;
+            if (Math.abs(diff) > 3) {
+              sceneState.paddleX = Math.max(10, Math.min(540, sceneState.paddleX + Math.sign(diff) * 320 * dt));
+            }
+          }
+
+          sceneState.starY += sceneState.starSpeed * dt;
+
+          drawStar(sceneState.starX, sceneState.starY, 0.55);
+
+          ctx.fillStyle = "#ffea66";
+          ctx.strokeStyle = "#000";
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.roundRect(sceneState.paddleX, 316, 90, 14, 4);
+          ctx.fill();
+          ctx.stroke();
+
+          drawHUD(Math.max(0, sceneState.time_left));
+          if (sceneState.elapsed < 1.2) {
+            drawOutlinedText("CATCH!", 320, 155, 56, "#ffffff", "#000033", 11);
+          }
+
+          // Check intersection
+          const starLeft = sceneState.starX - 17;
+          const starRight = sceneState.starX + 17;
+          const starBottom = sceneState.starY + 17;
+          const starTop = sceneState.starY - 17;
+
+          if (
+            starRight >= sceneState.paddleX &&
+            starLeft <= sceneState.paddleX + 90 &&
+            starBottom >= 316 &&
+            starTop <= 330
+          ) {
+            Global.register_win();
+            changeScene("timer_screen");
+          } else if (sceneState.starY > 334 || sceneState.time_left <= 0) {
+            Global.register_fail();
+            changeScene("timer_screen");
+          }
+        }
+
+        else if (currentScene === "minigame_4") {
+          // TIMING! (LOCK IN!)
+          ctx.fillStyle = "#1f4742";
+          ctx.fillRect(0, 0, W, H);
+
+          sceneState.elapsed += dt;
+          sceneState.time_left -= dt;
+
+          sceneState.markerX += sceneState.sweepDir * sceneState.sweepSpeed * dt;
+          if (sceneState.markerX >= sceneState.barRight) {
+            sceneState.markerX = sceneState.barRight;
+            sceneState.sweepDir = -1;
+          } else if (sceneState.markerX <= sceneState.barLeft) {
+            sceneState.markerX = sceneState.barLeft;
+            sceneState.sweepDir = 1;
+          }
+
+          // Draw bar border & track
+          ctx.fillStyle = "#0d1a1a";
+          ctx.fillRect(96, 196, 448, 48);
+          ctx.fillStyle = "#382640";
+          ctx.fillRect(100, 200, 440, 40);
+
+          // Target zone
+          ctx.fillStyle = "#40d973";
+          ctx.fillRect(sceneState.targetLeft, 200, sceneState.targetRight - sceneState.targetLeft, 40);
+
+          // Marker
+          ctx.fillStyle = "#ffea66";
+          ctx.strokeStyle = "#000";
+          ctx.lineWidth = 2;
+          ctx.fillRect(sceneState.markerX - 6, 190, 12, 60);
+          ctx.strokeRect(sceneState.markerX - 6, 190, 12, 60);
+
+          let attempted = false;
+          const lockBtn = {
+            x: 215, y: 268, w: 210, h: 42, label: "LOCK IN! (SPACE)", fontSize: 19, bg: "#2b6e5e",
+            onClick: () => { attempted = true; }
+          };
+          activeButtons.push(lockBtn);
+          drawButton(lockBtn);
+
+          if (justPressedSpace) {
+            attempted = true;
+          }
+
+          drawOutlinedText("Press SPACE or click when the marker is inside the green target zone!", 320, 336, 14, "#d9f2e6", "#000", 3);
+          drawHUD(Math.max(0, sceneState.time_left));
+
+          if (sceneState.elapsed < 1.2) {
+            drawOutlinedText("TIMING!", 320, 130, 56, "#ffffff", "#00261f", 11);
+          }
+
+          if (attempted) {
+            if (sceneState.markerX >= sceneState.targetLeft && sceneState.markerX <= sceneState.targetRight) {
+              Global.register_win();
+            } else {
+              Global.register_fail();
+            }
+            changeScene("timer_screen");
+          } else if (sceneState.time_left <= 0) {
+            Global.register_fail();
+            changeScene("timer_screen");
+          }
+        }
+
+        else if (currentScene === "done_screen") {
+          ctx.fillStyle = "#216633";
+          ctx.fillRect(0, 0, W, H);
+
+          drawOutlinedText("YOU WIN!", 320, 82, 62, "#fff280", "#002600", 11);
+          drawOutlinedText("YOU SURVIVED ALL ROUNDS! Wario would be proud.", 320, 146, 20, "#e6ffe6", "#000", 4);
+          drawOutlinedText(`Final Score: ${Global.score}`, 320, 192, 28, "#ffffff", "#000", 6);
+
+          const againBtn = {
+            x: 230, y: 232, w: 180, h: 42, label: "Play Again", fontSize: 21, bg: "#2e8540",
+            onClick: () => { sfxTap(); Global.reset(); changeScene("timer_screen"); }
+          };
+          const menuBtn = {
+            x: 230, y: 284, w: 180, h: 40, label: "Title Menu", fontSize: 20,
+            onClick: () => { sfxTap(); Global.reset(); changeScene("title"); }
+          };
+          activeButtons.push(againBtn, menuBtn);
+          activeButtons.forEach(drawButton);
+
+          if (justPressedSpace) againBtn.onClick();
+        }
+
+        else if (currentScene === "death_screen") {
+          ctx.fillStyle = "#401212";
+          ctx.fillRect(0, 0, W, H);
+
+          drawOutlinedText("GAME OVER", 320, 82, 62, "#ff594d", "#1a0000", 11);
+          drawOutlinedText("OUT OF GARLIC! The garlic ran out...", 320, 146, 20, "#ffd9d9", "#000", 4);
+          drawOutlinedText(`Final Score: ${Global.score}`, 320, 192, 28, "#ffffff", "#000", 6);
+
+          const retryBtn = {
+            x: 230, y: 232, w: 180, h: 42, label: "Retry", fontSize: 21, bg: "#8c2626",
+            onClick: () => { sfxTap(); Global.reset(); changeScene("timer_screen"); }
+          };
+          const menuBtn = {
+            x: 230, y: 284, w: 180, h: 40, label: "Title Menu", fontSize: 20,
+            onClick: () => { sfxTap(); Global.reset(); changeScene("title"); }
+          };
+          activeButtons.push(retryBtn, menuBtn);
+          activeButtons.forEach(drawButton);
+
+          if (justPressedSpace) retryBtn.onClick();
+        }
+
+        justPressedSpace = false;
+      }
+
+      function getCanvasCoords(e) {
+        const rect = canvas.getBoundingClientRect();
+        return {
+          x: ((e.clientX - rect.left) / rect.width) * W,
+          y: ((e.clientY - rect.top) / rect.height) * H
+        };
+      }
+
+      canvas.addEventListener("pointermove", (e) => {
+        const pt = getCanvasCoords(e);
+        pointerX = pt.x;
+        activeButtons.forEach((b) => {
+          b.hover = pt.x >= b.x && pt.x <= b.x + b.w && pt.y >= b.y && pt.y <= b.y + b.h;
+        });
+      });
+
+      canvas.addEventListener("pointerleave", () => {
+        pointerX = null;
+      });
+
+      canvas.addEventListener("pointerdown", (e) => {
+        const pt = getCanvasCoords(e);
+        pointerX = pt.x;
+        for (const b of activeButtons) {
+          if (pt.x >= b.x && pt.x <= b.x + b.w && pt.y >= b.y && pt.y <= b.y + b.h) {
+            b.onClick();
+            return;
+          }
+        }
+        if (currentScene === "minigame_2" || currentScene === "minigame_4") {
+          justPressedSpace = true;
+        }
+      });
+
+      function toggleMute() {
+        muted = !muted;
+        btnMute.textContent = muted ? "Sound: OFF" : "Sound: ON";
+      }
+
+      function toggleFullscreen() {
+        if (!document.fullscreenElement) {
+          stageWrap.requestFullscreen().catch(() => {});
+        } else {
+          document.exitFullscreen().catch(() => {});
+        }
+      }
+
+      btnMute.addEventListener("click", toggleMute);
+      btnFullscreen.addEventListener("click", toggleFullscreen);
+      btnStartRun.addEventListener("click", () => {
+        sfxTap();
+        Global.reset();
+        changeScene("timer_screen");
+      });
+
+      document.querySelectorAll("[data-jump]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const idx = parseInt(btn.getAttribute("data-jump"), 10);
+          sfxTap();
+          Global.reset();
+          Global.minigames_done = idx - 1;
+          changeScene(`minigame_${idx}`);
+        });
+      });
+
+      // Main loop
+      let lastTime = performance.now();
+      function loop(now) {
+        const dt = Math.min(0.05, (now - lastTime) / 1000);
+        lastTime = now;
+        updateAndRender(dt);
+        requestAnimationFrame(loop);
+      }
+      changeScene("title");
+      requestAnimationFrame(loop);
+    })();
+  </script>
+</body>
+</html>

@@ -13,6 +13,7 @@ const SCENES := [
 	"res://scenes/minigame_1.tscn",
 	"res://scenes/minigame_2.tscn",
 	"res://scenes/minigame_3.tscn",
+	"res://scenes/minigame_4.tscn",
 	"res://scenes/done_screen.tscn",
 	"res://scenes/death_screen.tscn",
 ]
@@ -24,14 +25,14 @@ func _ready() -> void:
 	# --- Global state machine (live autoload) ---
 	var g: Node = get_node("/root/Global")
 	g.reset()
-	for i in 9:
+	for i in 12:
 		g.register_win()
-	if g.score != 9 or g.minigames_done != 9 or g.speed_multiplier <= 1.0:
+	if g.score != 12 or g.minigames_done != 12 or g.speed_multiplier <= 1.0:
 		print("SMOKE FAIL: win path broken. score=", g.score,
 				" done=", g.minigames_done, " speed=", g.speed_multiplier)
 		failures += 1
 	else:
-		print("SMOKE OK: 9 wins -> score=", g.score, " speed=", g.speed_multiplier,
+		print("SMOKE OK: 12 wins -> score=", g.score, " speed=", g.speed_multiplier,
 				" time_limit=", g.time_limit())
 	if g.minigame_path() != "res://scenes/minigame_1.tscn":
 		print("SMOKE FAIL: rotation path wrong: ", g.minigame_path())

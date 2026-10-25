@@ -4,9 +4,9 @@ extends Node
 ## (minigames_done / lives) and adds score + a speed multiplier so the
 ## microgame rotation gets faster every round.
 
-const TOTAL_ROUNDS := 9          # rounds you must survive to reach the winner screen
+const TOTAL_ROUNDS := 12         # rounds you must survive to reach the winner screen
 const MAX_LIVES := 5             # five garlic = five lives, exactly like the guide
-const MINIGAME_COUNT := 3        # DODGE / MASH / CATCH
+const MINIGAME_COUNT := 4        # DODGE / MASH / CATCH / TIMING
 const BASE_TIME := 7.0           # seconds a microgame lasts at 1x speed
 
 var score: int = 0               # successful microgames

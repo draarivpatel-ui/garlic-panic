@@ -1,0 +1,104 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/minigame_4.gd" id="1_timing"]
+[ext_resource type="PackedScene" path="res://scenes/themed_timer.tscn" id="2_timer"]
+
+[node name="Minigame4" type="Node2D"]
+script = ExtResource("1_timing")
+
+[node name="Background" type="ColorRect" parent="."]
+offset_right = 640.0
+offset_bottom = 360.0
+color = Color(0.12, 0.28, 0.26, 1)
+
+[node name="Score" type="RichTextLabel" parent="."]
+scroll_active = false
+offset_left = 12.0
+offset_top = 66.0
+offset_right = 160.0
+offset_bottom = 94.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/normal_font_size = 18
+text = "Score: 0"
+clip_contents = false
+
+[node name="HudTimer" type="RichTextLabel" parent="."]
+scroll_active = false
+offset_left = 480.0
+offset_top = 66.0
+offset_right = 628.0
+offset_bottom = 94.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/normal_font_size = 18
+text = "0.0"
+horizontal_alignment = 2
+clip_contents = false
+
+[node name="BarBorder" type="ColorRect" parent="."]
+offset_left = 96.0
+offset_top = 196.0
+offset_right = 544.0
+offset_bottom = 244.0
+color = Color(0.05, 0.1, 0.1, 1)
+
+[node name="BarTrack" type="ColorRect" parent="."]
+offset_left = 100.0
+offset_top = 200.0
+offset_right = 540.0
+offset_bottom = 240.0
+color = Color(0.22, 0.15, 0.25, 1)
+
+[node name="TargetZone" type="ColorRect" parent="."]
+offset_left = 270.0
+offset_top = 200.0
+offset_right = 370.0
+offset_bottom = 240.0
+color = Color(0.25, 0.85, 0.45, 1)
+
+[node name="Marker" type="ColorRect" parent="."]
+offset_left = 114.0
+offset_top = 190.0
+offset_right = 126.0
+offset_bottom = 250.0
+color = Color(1, 0.95, 0.4, 1)
+
+[node name="LockButton" type="Button" parent="."]
+offset_left = 220.0
+offset_top = 268.0
+offset_right = 420.0
+offset_bottom = 310.0
+focus_mode = 0
+theme_override_font_sizes/font_size = 20
+text = "LOCK IN! (SPACE)"
+
+[node name="Hint" type="RichTextLabel" parent="."]
+scroll_active = false
+offset_left = 20.0
+offset_top = 322.0
+offset_right = 620.0
+offset_bottom = 350.0
+theme_override_colors/font_color = Color(0.85, 0.95, 0.9, 1)
+theme_override_font_sizes/normal_font_size = 14
+text = "Press SPACE or click when the marker is inside the green target zone!"
+horizontal_alignment = 1
+clip_contents = false
+
+[node name="Instruction" type="RichTextLabel" parent="."]
+scroll_active = false
+offset_left = 0.0
+offset_top = 95.0
+offset_right = 640.0
+offset_bottom = 165.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0.15, 0.12, 1)
+theme_override_constants/outline_size = 12
+theme_override_font_sizes/normal_font_size = 56
+text = "TIMING!"
+horizontal_alignment = 1
+clip_contents = false
+
+[node name="ThemedTimer" parent="." instance=ExtResource("2_timer")]

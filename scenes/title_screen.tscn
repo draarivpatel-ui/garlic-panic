@@ -44,7 +44,7 @@ offset_right = 620.0
 offset_bottom = 114.0
 theme_override_colors/font_color = Color(0.93, 0.88, 1, 1)
 theme_override_font_sizes/normal_font_size = 15
-text = "A WarioWare-style microgame collection - DODGE! MASH! CATCH!"
+text = "A WarioWare-style microgame collection - DODGE! MASH! CATCH! TIMING!"
 horizontal_alignment = 1
 clip_contents = false
 
@@ -96,7 +96,7 @@ offset_right = 620.0
 offset_bottom = 356.0
 theme_override_colors/font_color = Color(0.75, 0.68, 0.85, 1)
 theme_override_font_sizes/normal_font_size = 12
-text = "Arrows = move  |  Space = mash  |  A Hack Club Stardance mission game"
+text = "Arrows = move  |  Space = mash / lock in  |  A Hack Club Stardance mission game"
 horizontal_alignment = 1
 clip_contents = false
 

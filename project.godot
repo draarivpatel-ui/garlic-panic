@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="Garlic Panic! (WarioWare-style Microgames)"
-config/description="Three frantic 5-second microgames - DODGE, MASH and CATCH - chained together WarioWare-style with a rising speed multiplier, garlic lives, and score."
+config/description="Four frantic microgames - DODGE, MASH, CATCH and TIMING - chained together WarioWare-style with a rising speed multiplier, garlic lives, and score."
 run/main_scene="res://scenes/title_screen.tscn"
 config/features=PackedStringArray("4.7")
 config/icon="res://icon.svg"

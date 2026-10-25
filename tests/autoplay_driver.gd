@@ -7,7 +7,7 @@ extends Node
 ## fires before nodes' _process, and re-arming the themed timer every frame
 ## would keep it from ever reaching zero.
 
-const MICROGAMES := ["Minigame1", "Minigame2", "Minigame3"]
+const MICROGAMES := ["Minigame1", "Minigame2", "Minigame3", "Minigame4"]
 
 
 func _ready() -> void:
