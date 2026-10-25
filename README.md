@@ -1,5 +1,9 @@
 # Garlic Panic! — a WarioWare-style microgame collection
 
+![Title screen](screenshot1.png)
+
+![DODGE! in action](screenshot2.png)
+
 A Hack Club **Stardance "Make a WarioWare Game"** mission submission for **Aariv Patel**.
 Built with **Godot 4.7** (GDScript), following the mission's 17-step guide.
 
@@ -78,3 +82,10 @@ automated full-loop playthrough).
   upload to itch.io as an HTML project. See the mission guide's "Publishing and
   Submitting Your Game" step.
 - Attach the project on stardance.hackclub.com, write the devlogs, and submit.
+
+## Why I built this
+
+The WarioWare mission asked for a game that gets faster and meaner. I built
+Garlic Panic around a garlic with five lives and three microgames that speed
+up every round, because a game about pressure should be under pressure itself.
+Everything is hand-drawn SVG - no asset packs.
