@@ -1,4 +1,4 @@
-# Garlic Panic! — a WarioWare-style microgame collection
+# Garlic Panic! - a WarioWare-style microgame collection
 
 ![Title screen](screenshot1.png)
 
@@ -7,7 +7,7 @@
 A Hack Club **Stardance "Make a WarioWare Game"** mission submission for **Aariv Patel**.
 Built with **Godot 4.7** (GDScript), following the mission's 17-step guide.
 
-Three frantic microgames chain together WarioWare-style — each one flashes its
+Three frantic microgames chain together WarioWare-style - each one flashes its
 instruction, lasts a few seconds, and the whole game speeds up every round.
 
 ## The microgames
@@ -20,24 +20,24 @@ instruction, lasts a few seconds, and the whole game speeds up every round.
 
 ## The WarioWare glue
 
-- **Title screen** — Start Game / Settings (fullscreen toggle) / Quit.
-- **Intermission** (`timer_screen`) — shows your 5 garlic lives, level number,
+- **Title screen** - Start Game / Settings (fullscreen toggle) / Quit.
+- **Intermission** (`timer_screen`) - shows your 5 garlic lives, level number,
   score, and a countdown before each microgame.
-- **Speed multiplier** — every win raises a global speed multiplier (up to 2.5x):
+- **Speed multiplier** - every win raises a global speed multiplier (up to 2.5x):
   obstacles fall faster, the mash quota grows, and each microgame's timer shrinks.
-- **Score** — +1 per completed microgame, shown in the HUD and intermission.
-- **Fail** — lose one garlic; the microgame replays. Out of garlic → **GAME OVER**
+- **Score** - +1 per completed microgame, shown in the HUD and intermission.
+- **Fail** - lose one garlic; the microgame replays. Out of garlic → **GAME OVER**
   screen with Retry. Survive all 9 rounds → **YOU WIN!** screen with Play Again.
 
 ## Controls
 
-- **Arrow keys / A-D** — move (Dodge, Catch)
-- **Space** — mash (Mash); mouse click also works on the garlic button
+- **Arrow keys / A-D** - move (Dodge, Catch)
+- **Space** - mash (Mash); mouse click also works on the garlic button
 
 ## How to run it
 
 1. Download **Godot 4.x** (standard build, not .NET) from
-   [godotengine.org/download](https://godotengine.org/download) — the mission guide uses Godot 4.
+   [godotengine.org/download](https://godotengine.org/download) - the mission guide uses Godot 4.
 2. Open the Godot Project Manager → **Import** → select this folder's `project.godot`.
 3. Press **F5** (or the ▶ button) to play.
 
@@ -75,7 +75,7 @@ automated full-loop playthrough).
 ## What's left for a human
 
 - Track coding minutes with [hackatime](https://hackatime.hackclub.com) (WakaTime editor
-  extension) — agent time can't be logged as personal tracked minutes.
+  extension) - agent time can't be logged as personal tracked minutes.
 - Optionally record art/audio time with Lapse.
 - Publish: Godot **Project → Export → Web preset → Export Project** (needs the
   export templates downloaded once via the editor), zip the `exports/` folder, and
