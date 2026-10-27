@@ -65,5 +65,4 @@ func _advance() -> void:
 	elif Global.minigames_done >= Global.TOTAL_ROUNDS:
 		get_tree().change_scene_to_file("res://scenes/done_screen.tscn")
 	else:
-		var next_minigame := (Global.minigames_done % 4) + 1
-		get_tree().change_scene_to_file("res://scenes/minigame_%d.tscn" % next_minigame)
+		get_tree().change_scene_to_file(Global.minigame_path())

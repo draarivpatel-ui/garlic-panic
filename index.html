@@ -39,7 +39,7 @@
 
     header {
       width: 100%;
-      max-width: 900px;
+      max-width: 960px;
       display: flex;
       flex-wrap: wrap;
       align-items: center;
@@ -51,7 +51,8 @@
     .brand {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
+      flex-wrap: wrap;
     }
 
     .brand h1 {
@@ -70,6 +71,12 @@
       font-weight: 600;
       padding: 4px 10px;
       border-radius: 999px;
+    }
+
+    .badge.gold {
+      background: #422c14;
+      border-color: #b8860b;
+      color: var(--gold);
     }
 
     .toolbar {
@@ -111,7 +118,7 @@
 
     .stage-wrap {
       width: 100%;
-      max-width: 900px;
+      max-width: 960px;
       background: #0d0618;
       border: 3px solid var(--border);
       border-radius: 14px;
@@ -133,7 +140,7 @@
 
     .quick-bar {
       width: 100%;
-      max-width: 900px;
+      max-width: 960px;
       margin-top: 14px;
       display: flex;
       flex-wrap: wrap;
@@ -163,10 +170,10 @@
 
     .grid-cards {
       width: 100%;
-      max-width: 900px;
+      max-width: 960px;
       margin-top: 16px;
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(176px, 1fr));
       gap: 12px;
     }
 
@@ -199,6 +206,57 @@
       background: rgba(255, 255, 255, 0.1);
       color: #fff;
     }
+
+    details.dev-notes {
+      width: 100%;
+      max-width: 960px;
+      margin-top: 16px;
+      background: rgba(33, 19, 57, 0.78);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 18px;
+      user-select: text;
+    }
+
+    details.dev-notes summary {
+      cursor: pointer;
+      font-weight: 700;
+      color: var(--gold);
+      font-size: 0.98rem;
+      list-style: none;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    details.dev-notes summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .dev-notes-body {
+      margin-top: 12px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 14px;
+      font-size: 0.85rem;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .dev-notes-body h4 {
+      color: var(--text);
+      font-size: 0.88rem;
+      margin-bottom: 4px;
+    }
+
+    .dev-notes-body code {
+      background: rgba(0, 0, 0, 0.35);
+      padding: 1px 5px;
+      border-radius: 4px;
+      color: #ffea66;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 0.79rem;
+    }
   </style>
 </head>
 <body>
@@ -206,7 +264,8 @@
     <div class="brand">
       <h1>GARLIC PANIC!</h1>
       <span class="badge">Godot 4.7 + HTML5 Web Build</span>
-      <span class="badge">4 Microgames</span>
+      <span class="badge">5 Microgames</span>
+      <span class="badge gold" id="highScoreBadge">Best Score: 0 | Best Streak: 0</span>
     </div>
     <div class="toolbar">
       <button class="btn primary" id="btnStartRun">Start Full Game</button>
@@ -224,14 +283,15 @@
     <div class="quick-group">
       <span class="quick-label">Controls:</span>
       <span class="badge">Left / Right or A / D = Move</span>
-      <span class="badge">SPACE or Click = Mash / Lock In</span>
+      <span class="badge">SPACE or Click = Mash / Lock In / Chop</span>
     </div>
     <div class="quick-group">
-      <span class="quick-label">Jump to Microgame:</span>
+      <span class="quick-label">Practice Microgame:</span>
       <button class="btn" data-jump="1">1. DODGE!</button>
       <button class="btn" data-jump="2">2. MASH!</button>
       <button class="btn" data-jump="3">3. CATCH!</button>
       <button class="btn" data-jump="4">4. TIMING!</button>
+      <button class="btn" data-jump="5">5. SLICE!</button>
     </div>
   </div>
 
@@ -246,13 +306,38 @@
     </div>
     <div class="card">
       <h3>3. CATCH! <span class="tag">Minigame 3</span></h3>
-      <p>Slide the golden paddle left and right to catch the falling star before it hits the dungeon floor.</p>
+      <p>Slide the golden paddle left and right to catch the falling star before it hits the kitchen floor.</p>
     </div>
     <div class="card">
       <h3>4. TIMING! <span class="tag">Minigame 4</span></h3>
       <p>Wait for the oscillating cursor to enter the green target zone and press SPACE or click LOCK IN to nail the timing!</p>
     </div>
+    <div class="card">
+      <h3>5. SLICE! <span class="tag">Minigame 5</span></h3>
+      <p>Press SPACE or click CHOP when the red tomato slides into the green cutting-board zone, without slicing your friendly garlic bulb!</p>
+    </div>
   </div>
+
+  <details class="dev-notes" open>
+    <summary>
+      <span>How I Built This - Dev Notes by Aariv Patel</span>
+      <span class="tag">Architecture &amp; Godot 4 Sync</span>
+    </summary>
+    <div class="dev-notes-body">
+      <div>
+        <h4>1. Global State Machine &amp; Speed Ramp</h4>
+        <p>In both <code>scripts/global.gd</code> and this web build, a central <code>Global</code> state machine tracks your 5 garlic lives, current round (1 to 12), streak, and <code>speed_multiplier</code>. Every microgame win raises the speed multiplier by <code>+0.15x</code> up to <code>2.5x</code>, shrinking the microgame countdown timer (<code>7.0s / speed</code>) while accelerating hazard speeds.</p>
+      </div>
+      <div>
+        <h4>2. Hand-Written Vector Sprites &amp; Web Audio</h4>
+        <p>Instead of downloading external sprite packs, I wrote the garlic bulb, falling spikes, golden star, and chef cleaver directly as clean SVG/Canvas geometry (<code>assets/garlic.svg</code>, <code>spike.svg</code>, <code>star.svg</code>). All retro sound effects (win arpeggios, fail buzzes, mash pops, and cleaver chops) are synthesized live via the browser's <code>AudioContext</code>.</p>
+      </div>
+      <div>
+        <h4>3. Why Two Runtimes (Godot 4 + Canvas)?</h4>
+        <p>I built the core project in Godot 4.7 with GDScript scenes (<code>minigame_1.tscn</code> through <code>minigame_5.tscn</code>) and headless test harnesses, then mirrored the exact 640x360 scene graph into this single-file HTML5 Canvas port so anyone can play all 5 microgames or practice individual stages right in the browser with zero loading screens.</p>
+      </div>
+    </div>
+  </details>
 
   <script>
     (() => {
@@ -262,6 +347,7 @@
       const btnMute = document.getElementById("btnMute");
       const btnFullscreen = document.getElementById("btnFullscreen");
       const btnStartRun = document.getElementById("btnStartRun");
+      const highScoreBadge = document.getElementById("highScoreBadge");
 
       const W = 640;
       const H = 360;
@@ -274,6 +360,24 @@
       }
       setupHiDPI();
       window.addEventListener("resize", setupHiDPI);
+
+      // Persistent High Score & Best Streak
+      const STORAGE_SCORE_KEY = "garlic_panic_high_score";
+      const STORAGE_STREAK_KEY = "garlic_panic_best_streak";
+
+      function loadSavedInt(key) {
+        try {
+          return parseInt(localStorage.getItem(key) || "0", 10) || 0;
+        } catch (_) {
+          return 0;
+        }
+      }
+
+      function saveInt(key, val) {
+        try {
+          localStorage.setItem(key, String(val));
+        } catch (_) {}
+      }
 
       // Web Audio Retro Synth
       let audioCtx = null;
@@ -324,34 +428,58 @@
         playTone(440, 0.05, "triangle", 0.07, 660);
       }
 
+      function sfxChop() {
+        playTone(240, 0.06, "sawtooth", 0.1, 90);
+      }
+
       // Global State matching scripts/global.gd
       const Global = {
         TOTAL_ROUNDS: 12,
         MAX_LIVES: 5,
-        MINIGAME_COUNT: 4,
+        MINIGAME_COUNT: 5,
         BASE_TIME: 7.0,
         score: 0,
+        streak: 0,
+        highScore: loadSavedInt(STORAGE_SCORE_KEY),
+        bestStreak: loadSavedInt(STORAGE_STREAK_KEY),
         lives: 5,
         minigames_done: 0,
         speed_multiplier: 1.0,
         last_result: "",
+        syncStatsBadge() {
+          highScoreBadge.textContent = `Best Score: ${this.highScore} | Best Streak: ${this.bestStreak}`;
+        },
         reset() {
           this.score = 0;
+          this.streak = 0;
           this.lives = this.MAX_LIVES;
           this.minigames_done = 0;
           this.speed_multiplier = 1.0;
           this.last_result = "";
+          this.syncStatsBadge();
         },
         register_win() {
           this.score += 1;
+          this.streak += 1;
+          if (this.score > this.highScore) {
+            this.highScore = this.score;
+            saveInt(STORAGE_SCORE_KEY, this.highScore);
+          }
+          if (this.streak > this.bestStreak) {
+            this.bestStreak = this.streak;
+            saveInt(STORAGE_STREAK_KEY, this.bestStreak);
+          }
           this.minigames_done += 1;
           this.speed_multiplier = Math.min(2.5, 1.0 + 0.15 * this.minigames_done);
           this.last_result = "win";
+          this.syncStatsBadge();
           sfxWin();
         },
         register_fail() {
           this.lives -= 1;
+          this.streak = 0;
           this.last_result = "fail";
+          this.syncStatsBadge();
           sfxFail();
         },
         current_level() {
@@ -364,6 +492,7 @@
           return Math.max(3.0, Math.min(8.0, this.BASE_TIME / this.speed_multiplier));
         }
       };
+      Global.syncStatsBadge();
 
       // Input state
       const keys = { left: false, right: false };
@@ -477,6 +606,68 @@
         ctx.restore();
       }
 
+      function drawTomato(cx, cy, r = 18) {
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(cx, cy, r, 0, Math.PI * 2);
+        ctx.fillStyle = "#eb3b42";
+        ctx.fill();
+        ctx.lineWidth = 2.5;
+        ctx.strokeStyle = "#801519";
+        ctx.stroke();
+
+        // Leaf crown
+        ctx.beginPath();
+        ctx.moveTo(cx, cy - r + 2);
+        ctx.lineTo(cx - 7, cy - r - 5);
+        ctx.lineTo(cx - 2, cy - r - 1);
+        ctx.lineTo(cx, cy - r - 7);
+        ctx.lineTo(cx + 2, cy - r - 1);
+        ctx.lineTo(cx + 7, cy - r - 5);
+        ctx.closePath();
+        ctx.fillStyle = "#40d973";
+        ctx.fill();
+
+        // Highlight
+        ctx.beginPath();
+        ctx.arc(cx - 6, cy - 5, 4, 0, Math.PI * 2);
+        ctx.fillStyle = "#ff999d";
+        ctx.fill();
+        ctx.restore();
+      }
+
+      function drawCleaver(cx, bladeY) {
+        ctx.save();
+        // Handle
+        ctx.fillStyle = "#5c3317";
+        ctx.strokeStyle = "#291407";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.roundRect(cx + 22, bladeY - 26, 38, 12, 4);
+        ctx.fill();
+        ctx.stroke();
+
+        // Blade
+        ctx.fillStyle = "#dfe7f2";
+        ctx.strokeStyle = "#4a586e";
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        ctx.roundRect(cx - 34, bladeY - 28, 60, 38, 4);
+        ctx.fill();
+        ctx.stroke();
+
+        // Blade edge shine
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(cx - 32, bladeY + 5, 56, 4);
+
+        // Hole in cleaver corner
+        ctx.beginPath();
+        ctx.arc(cx - 24, bladeY - 19, 3.5, 0, Math.PI * 2);
+        ctx.fillStyle = "#452817";
+        ctx.fill();
+        ctx.restore();
+      }
+
       function drawOutlinedText(text, x, y, size, fill = "#ffffff", outline = "#000000", outlineWidth = 5, align = "center") {
         ctx.save();
         ctx.font = `800 ${size}px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif`;
@@ -497,12 +688,12 @@
         ctx.save();
         ctx.fillStyle = btn.hover ? "#5c349e" : (btn.bg || "#3b2166");
         ctx.strokeStyle = btn.border || "#8e65d6";
-        ctx.lineWidth = 2.5;
+        ctx.lineWidth = 2.2;
         ctx.beginPath();
         ctx.roundRect(btn.x, btn.y, btn.w, btn.h, 8);
         ctx.fill();
         ctx.stroke();
-        drawOutlinedText(btn.label, btn.x + btn.w / 2, btn.y + btn.h / 2 + 1, btn.fontSize || 20, "#ffffff", "#190a2e", 4);
+        drawOutlinedText(btn.label, btn.x + btn.w / 2, btn.y + btn.h / 2 + 1, btn.fontSize || 19, "#ffffff", "#190a2e", 4);
         ctx.restore();
       }
 
@@ -511,7 +702,7 @@
       let sceneState = {};
       let activeButtons = [];
 
-      function changeScene(name, customIndex = null) {
+      function changeScene(name) {
         currentScene = name;
         activeButtons = [];
         justPressedSpace = false;
@@ -558,6 +749,22 @@
             targetLeft: 270,
             targetRight: 370
           };
+        } else if (name === "minigame_5") {
+          sceneState = {
+            time_left: Global.time_limit(),
+            elapsed: 0,
+            boardLeft: 95,
+            boardRight: 545,
+            chopLeft: 265,
+            chopRight: 375,
+            targetX: 150,
+            targetDir: 1,
+            targetSpeed: 320 * Global.speed_multiplier,
+            garlicX: 505,
+            garlicDir: -1,
+            garlicSpeed: 230 * Global.speed_multiplier,
+            bladeY: 132
+          };
         } else if (name === "done_screen" || name === "death_screen") {
           sceneState = {};
         }
@@ -565,7 +772,7 @@
 
       function drawHUD(time_left) {
         drawOutlinedText(time_left.toFixed(1), 320, 34, 38, "#ffffff", "#000000", 7, "center");
-        drawOutlinedText(`Score: ${Global.score}`, 16, 78, 18, "#ffffff", "#000000", 4, "left");
+        drawOutlinedText(`Score: ${Global.score}  (Best: ${Global.highScore})`, 16, 78, 17, "#ffffff", "#000000", 4, "left");
         drawOutlinedText(`Speed: ${Global.speed_multiplier.toFixed(2)}x`, 624, 78, 18, "#ffea66", "#000000", 4, "right");
       }
 
@@ -577,25 +784,44 @@
           ctx.fillStyle = "#4a2973";
           ctx.fillRect(0, 0, W, H);
 
-          drawOutlinedText("GARLIC PANIC!", 320, 52, 54, "#ffea66", "#1a0d26", 10);
-          drawOutlinedText("A WarioWare-style microgame collection - DODGE! MASH! CATCH! TIMING!", 320, 102, 14.5, "#ede0ff", "#1a0d26", 3);
+          drawOutlinedText("GARLIC PANIC!", 320, 44, 50, "#ffea66", "#1a0d26", 10);
+          drawOutlinedText("5 WarioWare-style kitchen microgames: DODGE! MASH! CATCH! TIMING! SLICE!", 320, 86, 13.5, "#ede0ff", "#1a0d26", 3);
+          drawOutlinedText(`Best Score: ${Global.highScore}   |   Best Win Streak: ${Global.bestStreak}`, 320, 110, 14, "#40d973", "#1a0d26", 3);
 
-          drawGarlic(320, 148, 0.95);
+          drawGarlic(320, 148, 0.85);
 
           if (!sceneState.settingsOpen) {
             const startBtn = {
-              x: 225, y: 188, w: 190, h: 42, label: "Start Game", fontSize: 22, bg: "#5a2eb0",
+              x: 145, y: 182, w: 205, h: 40, label: "Start Full Campaign", fontSize: 19, bg: "#5a2eb0",
               onClick: () => { sfxTap(); Global.reset(); changeScene("timer_screen"); }
             };
             const settingsBtn = {
-              x: 225, y: 238, w: 190, h: 38, label: "Settings", fontSize: 19,
+              x: 360, y: 182, w: 135, h: 40, label: "Settings", fontSize: 18,
               onClick: () => { sfxTap(); sceneState.settingsOpen = true; }
             };
-            const practiceBtn = {
-              x: 225, y: 284, w: 190, h: 38, label: "Play TIMING! (#4)", fontSize: 17,
-              onClick: () => { sfxTap(); Global.reset(); Global.minigames_done = 3; changeScene("minigame_4"); }
-            };
-            activeButtons.push(startBtn, settingsBtn, practiceBtn);
+            activeButtons.push(startBtn, settingsBtn);
+
+            drawOutlinedText("PRACTICE ANY MICROGAME DIRECTLY:", 320, 240, 13, "#ffea66", "#1a0d26", 3);
+            const practiceGames = [
+              { idx: 1, label: "1. DODGE!" },
+              { idx: 2, label: "2. MASH!" },
+              { idx: 3, label: "3. CATCH!" },
+              { idx: 4, label: "4. TIMING!" },
+              { idx: 5, label: "5. SLICE!" }
+            ];
+            practiceGames.forEach((g, i) => {
+              const bx = 38 + i * 114;
+              activeButtons.push({
+                x: bx, y: 258, w: 106, h: 36, label: g.label, fontSize: 14.5, bg: "#351c5c",
+                onClick: () => {
+                  sfxTap();
+                  Global.reset();
+                  Global.minigames_done = g.idx - 1;
+                  changeScene(`minigame_${g.idx}`);
+                }
+              });
+            });
+
             activeButtons.forEach(drawButton);
 
             if (justPressedSpace) {
@@ -627,16 +853,16 @@
             activeButtons.forEach(drawButton);
           }
 
-          drawOutlinedText("Arrows / A-D = move   |   Space / Click = mash & lock in   |   Hack Club Stardance", 320, 344, 12.5, "#cbb8e8", "#000", 2);
+          drawOutlinedText("Arrows / A-D = move   |   Space / Click = mash, lock in & chop   |   Built by Aariv Patel", 320, 342, 12.5, "#cbb8e8", "#000", 2);
         }
 
         else if (currentScene === "timer_screen") {
           ctx.fillStyle = "#291a47";
           ctx.fillRect(0, 0, W, H);
 
-          drawOutlinedText(`Score: ${Global.score}`, 20, 26, 20, "#ffffff", "#000", 4, "left");
+          drawOutlinedText(`Score: ${Global.score} (Streak: ${Global.streak})`, 20, 26, 19, "#ffffff", "#000", 4, "left");
           drawOutlinedText(`Speed: ${Global.speed_multiplier.toFixed(2)}x`, 320, 26, 18, "#ffea66", "#000", 4, "center");
-          drawOutlinedText(`Level ${Global.current_level()} / ${Global.TOTAL_ROUNDS}`, 620, 26, 20, "#ffffff", "#000", 4, "right");
+          drawOutlinedText(`Level ${Global.current_level()} / ${Global.TOTAL_ROUNDS}`, 620, 26, 19, "#ffffff", "#000", 4, "right");
 
           // Draw 5 garlic lives
           for (let i = 0; i < Global.MAX_LIVES; i++) {
@@ -667,7 +893,7 @@
             drawOutlinedText("NICE!  +1 score", 320, 262, 23, "#40d973", "#000000", 4);
           }
 
-          const nextNames = ["DODGE!", "MASH!", "CATCH!", "TIMING!"];
+          const nextNames = ["DODGE!", "MASH!", "CATCH!", "TIMING!", "SLICE!"];
           const nextName = nextNames[Global.minigame_index() - 1];
           drawOutlinedText(`Next Up: Microgame #${Global.minigame_index()} (${nextName})`, 320, 330, 15, "#cbb8e8", "#000", 3);
 
@@ -908,20 +1134,115 @@
           }
         }
 
+        else if (currentScene === "minigame_5") {
+          // SLICE! (CHOP THE TOMATO IN THE GREEN ZONE - DO NOT CHOP THE GARLIC!)
+          ctx.fillStyle = "#452817";
+          ctx.fillRect(0, 0, W, H);
+
+          sceneState.elapsed += dt;
+          sceneState.time_left -= dt;
+
+          // Update moving target tomato & garlic decoy
+          sceneState.targetX += sceneState.targetDir * sceneState.targetSpeed * dt;
+          if (sceneState.targetX >= sceneState.boardRight) {
+            sceneState.targetX = sceneState.boardRight;
+            sceneState.targetDir = -1;
+          } else if (sceneState.targetX <= sceneState.boardLeft) {
+            sceneState.targetX = sceneState.boardLeft;
+            sceneState.targetDir = 1;
+          }
+
+          sceneState.garlicX += sceneState.garlicDir * sceneState.garlicSpeed * dt;
+          if (sceneState.garlicX >= sceneState.boardRight) {
+            sceneState.garlicX = sceneState.boardRight;
+            sceneState.garlicDir = -1;
+          } else if (sceneState.garlicX <= sceneState.boardLeft) {
+            sceneState.garlicX = sceneState.boardLeft;
+            sceneState.garlicDir = 1;
+          }
+
+          // Wooden cutting board
+          ctx.fillStyle = "#2b160a";
+          ctx.beginPath();
+          ctx.roundRect(74, 162, 492, 98, 10);
+          ctx.fill();
+
+          ctx.fillStyle = "#9e6d3d";
+          ctx.strokeStyle = "#5c3b1e";
+          ctx.lineWidth = 3;
+          ctx.beginPath();
+          ctx.roundRect(80, 166, 480, 90, 8);
+          ctx.fill();
+          ctx.stroke();
+
+          // Central Green Chop Zone
+          ctx.fillStyle = "rgba(64, 217, 115, 0.38)";
+          ctx.fillRect(sceneState.chopLeft, 168, sceneState.chopRight - sceneState.chopLeft, 86);
+          ctx.strokeStyle = "#40d973";
+          ctx.lineWidth = 2;
+          ctx.setLineDash([6, 4]);
+          ctx.strokeRect(sceneState.chopLeft, 168, sceneState.chopRight - sceneState.chopLeft, 86);
+          ctx.setLineDash([]);
+
+          // Draw sliding tomato target and garlic decoy
+          drawTomato(sceneState.targetX, 212, 18);
+          drawGarlic(sceneState.garlicX, 212, 0.55);
+
+          // Draw Chef's Cleaver above chop zone
+          drawCleaver(320, sceneState.bladeY);
+
+          let chopped = false;
+          const chopBtn = {
+            x: 215, y: 270, w: 210, h: 42, label: "CHOP! (SPACE)", fontSize: 19, bg: "#b5382a",
+            onClick: () => { chopped = true; }
+          };
+          activeButtons.push(chopBtn);
+          drawButton(chopBtn);
+
+          if (justPressedSpace) {
+            chopped = true;
+          }
+
+          drawOutlinedText("Chop the red tomato inside the green zone - DO NOT slice the garlic!", 320, 336, 13.5, "#f7e8d4", "#000", 3);
+          drawHUD(Math.max(0, sceneState.time_left));
+
+          if (sceneState.elapsed < 1.2) {
+            drawOutlinedText("SLICE!", 320, 112, 56, "#ffffff", "#2e1105", 11);
+          }
+
+          if (chopped) {
+            sfxChop();
+            sceneState.bladeY = 192;
+            const garlicInZone = sceneState.garlicX >= (sceneState.chopLeft - 12) && sceneState.garlicX <= (sceneState.chopRight + 12);
+            const tomatoInZone = sceneState.targetX >= sceneState.chopLeft && sceneState.targetX <= sceneState.chopRight;
+            if (garlicInZone) {
+              Global.register_fail();
+            } else if (tomatoInZone) {
+              Global.register_win();
+            } else {
+              Global.register_fail();
+            }
+            changeScene("timer_screen");
+          } else if (sceneState.time_left <= 0) {
+            Global.register_fail();
+            changeScene("timer_screen");
+          }
+        }
+
         else if (currentScene === "done_screen") {
           ctx.fillStyle = "#216633";
           ctx.fillRect(0, 0, W, H);
 
-          drawOutlinedText("YOU WIN!", 320, 82, 62, "#fff280", "#002600", 11);
-          drawOutlinedText("YOU SURVIVED ALL ROUNDS! Wario would be proud.", 320, 146, 20, "#e6ffe6", "#000", 4);
-          drawOutlinedText(`Final Score: ${Global.score}`, 320, 192, 28, "#ffffff", "#000", 6);
+          drawOutlinedText("YOU WIN!", 320, 74, 60, "#fff280", "#002600", 11);
+          drawOutlinedText("YOU SURVIVED ALL 12 ROUNDS! Wario would be proud.", 320, 134, 19, "#e6ffe6", "#000", 4);
+          drawOutlinedText(`Final Score: ${Global.score}   |   Best Score: ${Global.highScore}   |   Best Streak: ${Global.bestStreak}`, 320, 180, 21, "#ffffff", "#000", 5);
 
           const againBtn = {
-            x: 230, y: 232, w: 180, h: 42, label: "Play Again", fontSize: 21, bg: "#2e8540",
+            x: 230, y: 224, w: 180, h: 42, label: "Play Again", fontSize: 21, bg: "#2e8540",
             onClick: () => { sfxTap(); Global.reset(); changeScene("timer_screen"); }
           };
           const menuBtn = {
-            x: 230, y: 284, w: 180, h: 40, label: "Title Menu", fontSize: 20,
+            x: 230, y: 278, w: 180, h: 40, label: "Title Menu", fontSize: 20,
             onClick: () => { sfxTap(); Global.reset(); changeScene("title"); }
           };
           activeButtons.push(againBtn, menuBtn);
@@ -934,16 +1255,16 @@
           ctx.fillStyle = "#401212";
           ctx.fillRect(0, 0, W, H);
 
-          drawOutlinedText("GAME OVER", 320, 82, 62, "#ff594d", "#1a0000", 11);
-          drawOutlinedText("OUT OF GARLIC! The garlic ran out...", 320, 146, 20, "#ffd9d9", "#000", 4);
-          drawOutlinedText(`Final Score: ${Global.score}`, 320, 192, 28, "#ffffff", "#000", 6);
+          drawOutlinedText("GAME OVER", 320, 74, 60, "#ff594d", "#1a0000", 11);
+          drawOutlinedText("OUT OF GARLIC! All five cloves were lost in the kitchen...", 320, 134, 18, "#ffd9d9", "#000", 4);
+          drawOutlinedText(`Final Score: ${Global.score}   |   Best Score: ${Global.highScore}   |   Best Streak: ${Global.bestStreak}`, 320, 180, 21, "#ffffff", "#000", 5);
 
           const retryBtn = {
-            x: 230, y: 232, w: 180, h: 42, label: "Retry", fontSize: 21, bg: "#8c2626",
+            x: 230, y: 224, w: 180, h: 42, label: "Retry", fontSize: 21, bg: "#8c2626",
             onClick: () => { sfxTap(); Global.reset(); changeScene("timer_screen"); }
           };
           const menuBtn = {
-            x: 230, y: 284, w: 180, h: 40, label: "Title Menu", fontSize: 20,
+            x: 230, y: 278, w: 180, h: 40, label: "Title Menu", fontSize: 20,
             onClick: () => { sfxTap(); Global.reset(); changeScene("title"); }
           };
           activeButtons.push(retryBtn, menuBtn);
@@ -984,7 +1305,7 @@
             return;
           }
         }
-        if (currentScene === "minigame_2" || currentScene === "minigame_4") {
+        if (currentScene === "minigame_2" || currentScene === "minigame_4" || currentScene === "minigame_5") {
           justPressedSpace = true;
         }
       });

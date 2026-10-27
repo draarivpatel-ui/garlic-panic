@@ -1,0 +1,110 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/minigame_5.gd" id="1_slice"]
+[ext_resource type="PackedScene" path="res://scenes/themed_timer.tscn" id="2_timer"]
+[ext_resource type="Texture2D" path="res://assets/garlic.svg" id="3_garlic"]
+
+[node name="Minigame5" type="Node2D"]
+script = ExtResource("1_slice")
+
+[node name="Background" type="ColorRect" parent="."]
+offset_right = 640.0
+offset_bottom = 360.0
+color = Color(0.27, 0.16, 0.09, 1)
+
+[node name="CuttingBoard" type="ColorRect" parent="."]
+offset_left = 80.0
+offset_top = 168.0
+offset_right = 560.0
+offset_bottom = 256.0
+color = Color(0.62, 0.43, 0.24, 1)
+
+[node name="ChopZone" type="ColorRect" parent="."]
+offset_left = 265.0
+offset_top = 168.0
+offset_right = 375.0
+offset_bottom = 256.0
+color = Color(0.25, 0.85, 0.45, 0.45)
+
+[node name="CleaverBlade" type="ColorRect" parent="."]
+offset_left = 290.0
+offset_top = 112.0
+offset_right = 350.0
+offset_bottom = 158.0
+color = Color(0.86, 0.9, 0.95, 1)
+
+[node name="TargetItem" type="ColorRect" parent="."]
+offset_left = 132.0
+offset_top = 194.0
+offset_right = 168.0
+offset_bottom = 230.0
+color = Color(0.92, 0.24, 0.26, 1)
+
+[node name="GarlicHazard" type="Sprite2D" parent="."]
+position = Vector2(510, 212)
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("3_garlic")
+
+[node name="Score" type="RichTextLabel" parent="."]
+scroll_active = false
+offset_left = 12.0
+offset_top = 66.0
+offset_right = 160.0
+offset_bottom = 94.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/normal_font_size = 18
+text = "Score: 0"
+clip_contents = false
+
+[node name="HudTimer" type="RichTextLabel" parent="."]
+scroll_active = false
+offset_left = 480.0
+offset_top = 66.0
+offset_right = 628.0
+offset_bottom = 94.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/normal_font_size = 18
+text = "0.0"
+horizontal_alignment = 2
+clip_contents = false
+
+[node name="ChopButton" type="Button" parent="."]
+offset_left = 220.0
+offset_top = 270.0
+offset_right = 420.0
+offset_bottom = 312.0
+focus_mode = 0
+theme_override_font_sizes/font_size = 20
+text = "CHOP! (SPACE)"
+
+[node name="Hint" type="RichTextLabel" parent="."]
+scroll_active = false
+offset_left = 20.0
+offset_top = 324.0
+offset_right = 620.0
+offset_bottom = 352.0
+theme_override_colors/font_color = Color(0.96, 0.9, 0.82, 1)
+theme_override_font_sizes/normal_font_size = 14
+text = "Chop the red tomato in the green zone - DO NOT slice the garlic!"
+horizontal_alignment = 1
+clip_contents = false
+
+[node name="Instruction" type="RichTextLabel" parent="."]
+scroll_active = false
+offset_left = 0.0
+offset_top = 90.0
+offset_right = 640.0
+offset_bottom = 160.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0.22, 0.08, 0.02, 1)
+theme_override_constants/outline_size = 12
+theme_override_font_sizes/normal_font_size = 56
+text = "SLICE!"
+horizontal_alignment = 1
+clip_contents = false
+
+[node name="ThemedTimer" parent="." instance=ExtResource("2_timer")]
