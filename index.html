@@ -264,7 +264,7 @@
     <div class="brand">
       <h1>GARLIC PANIC!</h1>
       <span class="badge">Godot 4.7 + HTML5 Web Build</span>
-      <span class="badge">5 Microgames</span>
+      <span class="badge">6 Microgames</span>
       <span class="badge gold" id="highScoreBadge">Best Score: 0 | Best Streak: 0</span>
     </div>
     <div class="toolbar">
@@ -292,6 +292,7 @@
       <button class="btn" data-jump="3">3. CATCH!</button>
       <button class="btn" data-jump="4">4. TIMING!</button>
       <button class="btn" data-jump="5">5. SLICE!</button>
+      <button class="btn" data-jump="6">6. SORT!</button>
     </div>
   </div>
 
@@ -316,6 +317,10 @@
       <h3>5. SLICE! <span class="tag">Minigame 5</span></h3>
       <p>Press SPACE or click CHOP when the red tomato slides into the green cutting-board zone, without slicing your friendly garlic bulb!</p>
     </div>
+    <div class="card">
+      <h3>6. SORT! <span class="tag">Minigame 6</span></h3>
+      <p>Sort 4 kitchen items into the right bin before the timer runs out: press Left (A) for Garlic Bin or Right (D) for Tomato Bin!</p>
+    </div>
   </div>
 
   <details class="dev-notes" open>
@@ -334,7 +339,7 @@
       </div>
       <div>
         <h4>3. Why Two Runtimes (Godot 4 + Canvas)?</h4>
-        <p>I built the core project in Godot 4.7 with GDScript scenes (<code>minigame_1.tscn</code> through <code>minigame_5.tscn</code>) and headless test harnesses, then mirrored the exact 640x360 scene graph into this single-file HTML5 Canvas port so anyone can play all 5 microgames or practice individual stages right in the browser with zero loading screens.</p>
+        <p>I built the core project in Godot 4.7 with GDScript scenes (<code>minigame_1.tscn</code> through <code>minigame_6.tscn</code>) and headless test harnesses, then mirrored the exact 640x360 scene graph into this single-file HTML5 Canvas port so anyone can play all 6 microgames or practice individual stages right in the browser with zero loading screens.</p>
       </div>
     </div>
   </details>
@@ -436,7 +441,7 @@
       const Global = {
         TOTAL_ROUNDS: 12,
         MAX_LIVES: 5,
-        MINIGAME_COUNT: 5,
+        MINIGAME_COUNT: 6,
         BASE_TIME: 7.0,
         score: 0,
         streak: 0,
@@ -497,11 +502,13 @@
       // Input state
       const keys = { left: false, right: false };
       let justPressedSpace = false;
+      let justPressedLeft = false;
+      let justPressedRight = false;
       let pointerX = null;
 
       window.addEventListener("keydown", (e) => {
-        if (["ArrowLeft", "KeyA"].includes(e.code)) keys.left = true;
-        if (["ArrowRight", "KeyD"].includes(e.code)) keys.right = true;
+        if (["ArrowLeft", "KeyA"].includes(e.code)) { if (!e.repeat) justPressedLeft = true; keys.left = true; }
+        if (["ArrowRight", "KeyD"].includes(e.code)) { if (!e.repeat) justPressedRight = true; keys.right = true; }
         if (e.code === "Space" || e.code === "Enter") {
           if (!e.repeat) justPressedSpace = true;
           e.preventDefault();
@@ -785,7 +792,7 @@
           ctx.fillRect(0, 0, W, H);
 
           drawOutlinedText("GARLIC PANIC!", 320, 44, 50, "#ffea66", "#1a0d26", 10);
-          drawOutlinedText("5 WarioWare-style kitchen microgames: DODGE! MASH! CATCH! TIMING! SLICE!", 320, 86, 13.5, "#ede0ff", "#1a0d26", 3);
+          drawOutlinedText("6 WarioWare-style kitchen microgames: DODGE! MASH! CATCH! TIMING! SLICE! SORT!", 320, 86, 13, "#ede0ff", "#1a0d26", 3);
           drawOutlinedText(`Best Score: ${Global.highScore}   |   Best Win Streak: ${Global.bestStreak}`, 320, 110, 14, "#40d973", "#1a0d26", 3);
 
           drawGarlic(320, 148, 0.85);
@@ -807,12 +814,13 @@
               { idx: 2, label: "2. MASH!" },
               { idx: 3, label: "3. CATCH!" },
               { idx: 4, label: "4. TIMING!" },
-              { idx: 5, label: "5. SLICE!" }
+              { idx: 5, label: "5. SLICE!" },
+              { idx: 6, label: "6. SORT!" }
             ];
             practiceGames.forEach((g, i) => {
-              const bx = 38 + i * 114;
+              const bx = 22 + i * 100;
               activeButtons.push({
-                x: bx, y: 258, w: 106, h: 36, label: g.label, fontSize: 14.5, bg: "#351c5c",
+                x: bx, y: 258, w: 94, h: 36, label: g.label, fontSize: 13.5, bg: "#351c5c",
                 onClick: () => {
                   sfxTap();
                   Global.reset();
@@ -893,7 +901,7 @@
             drawOutlinedText("NICE!  +1 score", 320, 262, 23, "#40d973", "#000000", 4);
           }
 
-          const nextNames = ["DODGE!", "MASH!", "CATCH!", "TIMING!", "SLICE!"];
+          const nextNames = ["DODGE!", "MASH!", "CATCH!", "TIMING!", "SLICE!", "SORT!"];
           const nextName = nextNames[Global.minigame_index() - 1];
           drawOutlinedText(`Next Up: Microgame #${Global.minigame_index()} (${nextName})`, 320, 330, 15, "#cbb8e8", "#000", 3);
 
@@ -1229,6 +1237,74 @@
           }
         }
 
+        else if (currentScene === "minigame_6") {
+          // SORT! (SORT 4 ITEMS INTO GARLIC BIN OR TOMATO BIN)
+          ctx.fillStyle = "#233f47";
+          ctx.fillRect(0, 0, W, H);
+
+          sceneState.elapsed += dt;
+          sceneState.time_left -= dt;
+
+          // Center sorting chute
+          ctx.fillStyle = "#365c66";
+          ctx.strokeStyle = "#7ab8c7";
+          ctx.lineWidth = 3;
+          ctx.beginPath();
+          ctx.roundRect(245, 130, 150, 115, 10);
+          ctx.fill();
+          ctx.stroke();
+
+          drawOutlinedText(`Sorted: ${sceneState.sortedCount} / ${sceneState.targetSorts}`, 320, 114, 20, "#ffea66", "#000", 4);
+
+          if (sceneState.isGarlic) {
+            drawGarlic(320, 188, 0.72);
+          } else {
+            drawTomato(320, 188, 24);
+          }
+
+          let choice = null;
+          const leftBinBtn = {
+            x: 60, y: 262, w: 210, h: 42, label: "<- GARLIC BIN (A / Left)", fontSize: 16, bg: "#2e6f5e",
+            onClick: () => { choice = true; }
+          };
+          const rightBinBtn = {
+            x: 370, y: 262, w: 210, h: 42, label: "TOMATO BIN (D / Right) ->", fontSize: 16, bg: "#9e332e",
+            onClick: () => { choice = false; }
+          };
+          activeButtons.push(leftBinBtn, rightBinBtn);
+          drawButton(leftBinBtn);
+          drawButton(rightBinBtn);
+
+          if (justPressedLeft) choice = true;
+          else if (justPressedRight) choice = false;
+
+          drawOutlinedText("Sort 4 items: press Left (A) for Garlic or Right (D) for Tomato!", 320, 336, 13.5, "#e2f5f7", "#000", 3);
+          drawHUD(Math.max(0, sceneState.time_left));
+
+          if (sceneState.elapsed < 1.2) {
+            drawOutlinedText("SORT!", 320, 112, 56, "#ffffff", "#0b1e24", 11);
+          }
+
+          if (choice !== null) {
+            if (choice === sceneState.isGarlic) {
+              sfxMash(sceneState.sortedCount + 2, sceneState.targetSorts);
+              sceneState.sortedCount += 1;
+              if (sceneState.sortedCount >= sceneState.targetSorts) {
+                Global.register_win();
+                changeScene("timer_screen");
+              } else {
+                sceneState.isGarlic = Math.random() < 0.5;
+              }
+            } else {
+              Global.register_fail();
+              changeScene("timer_screen");
+            }
+          } else if (sceneState.time_left <= 0) {
+            Global.register_fail();
+            changeScene("timer_screen");
+          }
+        }
+
         else if (currentScene === "done_screen") {
           ctx.fillStyle = "#216633";
           ctx.fillRect(0, 0, W, H);
@@ -1273,7 +1349,18 @@
           if (justPressedSpace) retryBtn.onClick();
         }
 
+        } else if (name === "minigame_6") {
+          sceneState = {
+            time_left: Global.time_limit(),
+            elapsed: 0,
+            sortedCount: 0,
+            targetSorts: 4,
+            isGarlic: Math.random() < 0.5
+          };
+        }
         justPressedSpace = false;
+        justPressedLeft = false;
+        justPressedRight = false;
       }
 
       function getCanvasCoords(e) {

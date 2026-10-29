@@ -12,9 +12,10 @@ const SCENES := [
 	"res://scenes/themed_timer.tscn",
 	"res://scenes/minigame_1.tscn",
 	"res://scenes/minigame_2.tscn",
-	"res://scenes/minigame_3.tscn",
+	"res://scenes/minigame_1.tscn",
 	"res://scenes/minigame_4.tscn",
 	"res://scenes/minigame_5.tscn",
+	"res://scenes/minigame_6.tscn",
 	"res://scenes/done_screen.tscn",
 	"res://scenes/death_screen.tscn",
 ]
@@ -35,7 +36,7 @@ func _ready() -> void:
 	else:
 		print("SMOKE OK: 12 wins -> score=", g.score, " speed=", g.speed_multiplier,
 				" time_limit=", g.time_limit())
-	if g.minigame_path() != "res://scenes/minigame_3.tscn":
+	if g.minigame_path() != "res://scenes/minigame_1.tscn":
 		print("SMOKE FAIL: rotation path wrong: ", g.minigame_path())
 		failures += 1
 

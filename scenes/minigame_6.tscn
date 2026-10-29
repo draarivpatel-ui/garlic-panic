@@ -1,0 +1,118 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/minigame_6.gd" id="1_sort"]
+[ext_resource type="PackedScene" path="res://scenes/themed_timer.tscn" id="2_timer"]
+[ext_resource type="Texture2D" path="res://assets/garlic.svg" id="3_garlic"]
+
+[node name="Minigame6" type="Node2D"]
+script = ExtResource("1_sort")
+
+[node name="Background" type="ColorRect" parent="."]
+offset_right = 640.0
+offset_bottom = 360.0
+color = Color(0.14, 0.25, 0.28, 1)
+
+[node name="ChuteBox" type="ColorRect" parent="."]
+offset_left = 250.0
+offset_top = 135.0
+offset_right = 390.0
+offset_bottom = 245.0
+color = Color(0.22, 0.36, 0.4, 1)
+
+[node name="GarlicItem" type="Sprite2D" parent="."]
+position = Vector2(320, 190)
+scale = Vector2(0.65, 0.65)
+texture = ExtResource("3_garlic")
+
+[node name="TomatoItem" type="ColorRect" parent="."]
+visible = false
+offset_left = 296.0
+offset_top = 166.0
+offset_right = 344.0
+offset_bottom = 214.0
+color = Color(0.92, 0.24, 0.26, 1)
+
+[node name="LeftBinButton" type="Button" parent="."]
+offset_left = 60.0
+offset_top = 262.0
+offset_right = 260.0
+offset_bottom = 308.0
+focus_mode = 0
+theme_override_font_sizes/font_size = 18
+text = "<- GARLIC BIN (A / Left)"
+
+[node name="RightBinButton" type="Button" parent="."]
+offset_left = 380.0
+offset_top = 262.0
+offset_right = 580.0
+offset_bottom = 308.0
+focus_mode = 0
+theme_override_font_sizes/font_size = 18
+text = "TOMATO BIN (D / Right) ->"
+
+[node name="ProgressLabel" type="RichTextLabel" parent="."]
+scroll_active = false
+offset_left = 200.0
+offset_top = 100.0
+offset_right = 440.0
+offset_bottom = 130.0
+theme_override_colors/font_color = Color(1, 0.92, 0.4, 1)
+theme_override_font_sizes/normal_font_size = 20
+text = "Sorted: 0 / 4"
+horizontal_alignment = 1
+clip_contents = false
+
+[node name="Score" type="RichTextLabel" parent="."]
+scroll_active = false
+offset_left = 12.0
+offset_top = 66.0
+offset_right = 160.0
+offset_bottom = 94.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/normal_font_size = 18
+text = "Score: 0"
+clip_contents = false
+
+[node name="HudTimer" type="RichTextLabel" parent="."]
+scroll_active = false
+offset_left = 480.0
+offset_top = 66.0
+offset_right = 628.0
+offset_bottom = 94.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/normal_font_size = 18
+text = "0.0"
+horizontal_alignment = 2
+clip_contents = false
+
+[node name="Hint" type="RichTextLabel" parent="."]
+scroll_active = false
+offset_left = 20.0
+offset_top = 324.0
+offset_right = 620.0
+offset_bottom = 352.0
+theme_override_colors/font_color = Color(0.9, 0.96, 0.96, 1)
+theme_override_font_sizes/normal_font_size = 14
+text = "Sort 4 items: Left (A) for Garlic, Right (D) for Tomato!"
+horizontal_alignment = 1
+clip_contents = false
+
+[node name="Instruction" type="RichTextLabel" parent="."]
+scroll_active = false
+offset_left = 0.0
+offset_top = 90.0
+offset_right = 640.0
+offset_bottom = 160.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0.05, 0.12, 0.15, 1)
+theme_override_constants/outline_size = 12
+theme_override_font_sizes/normal_font_size = 56
+text = "SORT!"
+horizontal_alignment = 1
+clip_contents = false
+
+[node name="ThemedTimer" parent="." instance=ExtResource("2_timer")]

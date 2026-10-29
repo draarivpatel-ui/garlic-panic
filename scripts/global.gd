@@ -1,11 +1,11 @@
 extends Node
 ## Global autoload - shared state for the whole WarioWare loop.
 ## Tracks lives, score, round counter, and the global speed multiplier
-## across all 5 microgames (DODGE, MASH, CATCH, TIMING, SLICE).
+## across all 5 microgames (DODGE, MASH, CATCH, TIMING, SLICE, SORT).
 
 const TOTAL_ROUNDS := 12         # rounds you must survive to reach the winner screen
 const MAX_LIVES := 5             # five garlic cloves = five lives
-const MINIGAME_COUNT := 5        # DODGE / MASH / CATCH / TIMING / SLICE
+const MINIGAME_COUNT := 6        # DODGE / MASH / CATCH / TIMING / SLICE
 const BASE_TIME := 7.0           # seconds a microgame lasts at 1x speed
 
 var score: int = 0               # successful microgames
